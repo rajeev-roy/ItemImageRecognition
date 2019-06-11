@@ -1,17 +1,17 @@
 USE [master]
 GO
 
-/****** Object:  Database [ProductScanDB]    Script Date: 11-06-2019 2.33.22 PM ******/
-DROP DATABASE [ProductScanDB]
-GO
+--/****** Object:  Database [ProductScanDB]    Script Date: 11-06-2019 2.33.22 PM ******/
+--DROP DATABASE [ProductScanDB]
+--GO
 
 /****** Object:  Database [ProductScanDB]    Script Date: 11-06-2019 2.33.22 PM ******/
 CREATE DATABASE [ProductScanDB]
  CONTAINMENT = NONE
  ON  PRIMARY 
-( NAME = N'ProductScanDB', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.PRATIK_NCR\MSSQL\DATA\ProductScanDB.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+( NAME = N'ProductScanDB', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\ProductScanDB.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
  LOG ON 
-( NAME = N'ProductScanDB_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL14.PRATIK_NCR\MSSQL\DATA\ProductScanDB_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+( NAME = N'ProductScanDB_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL13.MSSQLSERVER\MSSQL\DATA\ProductScanDB_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
 GO
 
 IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
