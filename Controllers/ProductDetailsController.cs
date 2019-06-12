@@ -93,7 +93,7 @@ namespace FindProductByImage.Controllers
             var tempFolderPath = Path.Combine(_environment.WebRootPath, "temporary");
             fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count();
 
-            if (fileCount==5)
+            if (fileCount==15)
             {
                 var newFolderName = id.ToString();
                 string path = _environment.WebRootPath + "\\ImagesStorage\\" + newFolderName;
@@ -124,7 +124,7 @@ namespace FindProductByImage.Controllers
             }
             else
             {
-                Console.WriteLine("less than 5");
+                Console.WriteLine("less than 15");
             }
 
         }
@@ -135,7 +135,7 @@ namespace FindProductByImage.Controllers
             fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count() +
                 Directory.EnumerateFiles(tempFolderPath, "*.png", SearchOption.AllDirectories).Count();
 
-            if (fileCount == 5)
+            if (fileCount == 15)
             {
                 var newFolderName = id.ToString();
                 string path = _environment.WebRootPath + "\\ImagesStorage\\" + newFolderName;
@@ -167,7 +167,7 @@ namespace FindProductByImage.Controllers
             }
             else
             {
-                Console.WriteLine("less than 5");
+                Console.WriteLine("less than 15");
             }
         }
 
@@ -292,7 +292,7 @@ namespace FindProductByImage.Controllers
         {
             var tempID = HttpContext.Session.GetString("idval");
             System.Diagnostics.Debug.WriteLine("capture(string) function first line count= " + count);
-            if (count < 6)
+            if (count < 16)
             {
                 try
                 {
@@ -339,7 +339,7 @@ namespace FindProductByImage.Controllers
             }
             else
             {
-                //System.Diagnostics.Debug.WriteLine("count of pictures exceeded 5");
+                //System.Diagnostics.Debug.WriteLine("count of pictures exceeded 15");
 
                 return Json(count);
             }
