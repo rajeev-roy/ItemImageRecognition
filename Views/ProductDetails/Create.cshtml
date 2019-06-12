@@ -1,46 +1,168 @@
-﻿@model FindProductByImage.Models.ProductDetails
+﻿
+@model FindProductByImage.Models.ProductDetails
 
 @{
     ViewData["Title"] = "Create";
 }
+<!DOCTYPE html>
 
-<h2>Add New Product</h2>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Capture</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>WebcamJS Test Page</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <style type="text/css">
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+        body {
+            font-family: Helvetica, sans-serif;
+        }
+
+        h2, h3 {
+            margin-top: 0;
+        }
+
+        form {
+            margin-top: 15px;
+        }
+
+            form > input {
+                margin-right: 15px;
+            }
+
+
+        #buttonhide {
+            background: transparent;
+            border: none !important;
+            font-size: 0;
+        }
+    </style>
+</head>
+<body class="container">
+    <br />
+    <h2>Add New Product</h2>
+
+    <hr />
+    <div class="row">
+        <div class="column">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+        <div class="column">
+            <div class="col-md-4"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Camera</div>
+                    <div class="panel-body">
+                        <div id="my_camera"></div>
+                        <!-- A button for taking snaps -->
+                        <form>
+                            <input type="button" class="btn btn-success" value="Take Snapshot" onClick="check()">
+                        </form>
+
+                        <label>@ViewData["noOfPics"]</label>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            @*<div class="form-group">
-                <label asp-for="Datetime" class="control-label"></label>
-                <input asp-for="Datetime" class="form-control" />
-                <span asp-validation-for="Datetime" class="text-danger"></span>
-            </div>*@
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-        </form>
+        </div>
+
+        <script src="~/webcamjs/webcam.js"></script>
+        <script src="~/js/JavaScript.js"></script>
+        <!-- Configure a few settings and attach camera -->
+        <script language="JavaScript">
+            Webcam.set({
+                width: 320,
+                height: 240,
+                image_format: 'jpeg',
+                jpeg_quality: 90
+            });
+            Webcam.attach('#my_camera');
+        </script>
+        <script language="JavaScript">
+            function take_snapshot() {
+                // take snapshot and get image data
+                Webcam.snap(function (data_uri) {
+                    Webcam.upload(data_uri,
+                        '/ProductDetails/Capture');
+                });
+            }
+        </script>
     </div>
-</div>
 
+    <div class="row">
+        <div>
+            <div class="col-md-4"></div>
+            <div class="col-md-2"></div>
+            <div class="col-md-4"></div>
+            <div class="col-md-2"></div>
+
+            <form method="post" action="/ProductDetails/UploadPictures" enctype="multipart/form-data">
+                <div class="col-md-4"></div>
+
+                @*<span>Select File:</span>*@
+                <div align="center">
+                    @*<input type="file" name="postedFiles" id="file" multiple="multiple" accept=".jpg, .png , .jpeg" onchange="validate()" />*@
+                    <input type="file" name="pics" id="pics" multiple onchange="validate(pics)" required />
+                    <br />
+                    <br />
+                </div>
+                <hr />
+
+                <div class="col-md-4"></div>
+
+                <div align="center">
+                    <input type="submit" value="Upload" />
+                </div>
+                <p name="p1" id="p1"></p>
+            </form>
+            <span style="color:green">@ViewData["noOfFiles"]</span>
+        </div>
+    </div>
+</body>
+
+</html>
 <div>
     <a asp-action="Index">Go to List</a>
 </div>
+<script>
+
+    var counter = 0;
+
+    function check() {
+        if (counter < 5) {
+            take_snapshot();
+            counter++;
+        }
+        else {
+            alert("only 5 pictures allowed")
+        }
+    };
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

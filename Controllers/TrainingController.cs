@@ -20,7 +20,8 @@ namespace FindProductByImage.Controllers
     public class TrainingController : Controller
     {
         private readonly DataContext _context;
-        public string BaseImagesFolderPath = @"C:\Users\Pratik saxsena\Desktop\NCR_Internship\frontend\FindProductByImage5\wwwroot\ImagesStorage\" ;
+        public string BaseImagesFolderPath = @"C:\Users\tanis\Videos\New folder\ItemImageRecognition\wwwroot\ImagesStorage\";
+        //public string BaseImagesFolderPath = @"C:\Users\Pratik saxsena\Desktop\NCR_Internship\frontend\FindProductByImage5\wwwroot\ImagesStorage\" ;
         private const string SouthCentralUsEndpoint = "https://centralindia.api.cognitive.microsoft.com";
         public IActionResult Index()
         {
