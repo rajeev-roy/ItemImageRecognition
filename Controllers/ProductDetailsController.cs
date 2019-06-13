@@ -73,9 +73,7 @@ namespace FindProductByImage.Controllers
                 productDetails.Datetime = DateTime.Now;
                 _context.Add(productDetails);
                 await _context.SaveChangesAsync();
-                //int tempID = productDetails.ID;
-                //TempData["idData"] = tempID;
-                //HttpContext.Session.SetString("idval", tempID.ToString());
+                
                 SaveImages(productDetails.ID);
 
                 return RedirectToAction("Index", "ProductDetails");
@@ -91,41 +89,51 @@ namespace FindProductByImage.Controllers
         private void SaveImages(int id)
         {
             var tempFolderPath = Path.Combine(_environment.WebRootPath, "temporary");
-            fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count();
-
-            if (fileCount==15)
+            if (Directory.Exists(tempFolderPath))
             {
-                var newFolderName = id.ToString();
-                string path = _environment.WebRootPath + "\\ImagesStorage\\" + newFolderName;
-                System.IO.Directory.CreateDirectory(path);
-                var storeImagePath = Path.Combine(_environment.WebRootPath, "ImagesStorage", newFolderName);
+                fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count();
 
-                if (System.IO.Directory.Exists(tempFolderPath))
+                if (fileCount == 15)
                 {
-                    string[] files = System.IO.Directory.GetFiles(tempFolderPath);
-                    string fileName;
-                    string destFile;
+                    var newFolderName = id.ToString();
+                    string path = _environment.WebRootPath + "\\ImagesStorage\\" + newFolderName;
+                    System.IO.Directory.CreateDirectory(path);
+                    var storeImagePath = Path.Combine(_environment.WebRootPath, "ImagesStorage", newFolderName);
 
-                    // Copy the files and overwrite destination files if they already exist.
-                    foreach (string s in files)
+                    if (System.IO.Directory.Exists(tempFolderPath))
                     {
-                        fileName = System.IO.Path.GetFileName(s);
-                        destFile = System.IO.Path.Combine(storeImagePath, fileName);
-                        System.IO.File.Copy(s, destFile, true);
-                        System.IO.File.Delete(s);
+                        string[] files = System.IO.Directory.GetFiles(tempFolderPath);
+                        string fileName;
+                        string destFile;
+
+                        // Copy the files and overwrite destination files if they already exist.
+                        foreach (string s in files)
+                        {
+                            fileName = System.IO.Path.GetFileName(s);
+                            destFile = System.IO.Path.Combine(storeImagePath, fileName);
+                            System.IO.File.Copy(s, destFile, true);
+                            System.IO.File.Delete(s);
+                        }
+
                     }
 
+                    else
+                    {
+                        ViewBag.CameraError="Source path does not exist!";
+                    }
                 }
-
                 else
                 {
-                    Console.WriteLine("Source path does not exist!");
+                    ViewBag.CameraError="less than 15";
                 }
             }
             else
             {
-                Console.WriteLine("less than 15");
+                ViewBag.CameraError = "Product Image doesn't exists !";
+                Directory.CreateDirectory(tempFolderPath);
+
             }
+            
 
         }
 
@@ -162,12 +170,12 @@ namespace FindProductByImage.Controllers
 
                 else
                 {
-                    Console.WriteLine("Source path does not exist!");
+                    ViewBag.CameraError = "Source path does not exist!";
                 }
             }
             else
             {
-                Console.WriteLine("less than 15");
+                ViewBag.CameraError = "less than 15";
             }
         }
 
