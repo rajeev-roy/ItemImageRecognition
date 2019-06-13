@@ -1,11 +1,11 @@
 USE [ProductScanDB]
 GO
+IF OBJECT_ID(N'dbo.ProductDetails', N'U') IS NOT NULL
+BEGIN
+   DROP TABLE [dbo].[ProductDetails]
+END
 
-/****** Object:  Table [dbo].[ProductDetails]    Script Date: 11-06-2019 2.33.55 PM ******/
-DROP TABLE [dbo].[ProductDetails]
 GO
-
-/****** Object:  Table [dbo].[ProductDetails]    Script Date: 11-06-2019 2.33.55 PM ******/
 SET ANSI_NULLS ON
 GO
 
