@@ -17,8 +17,9 @@
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -26,7 +27,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="ProductDetails" asp-action="Index" class="navbar-brand">Retail Image Recognition</a>
+                <a asp-area="" asp-controller="ProductDetails" asp-action="Index" class="navbar-brand">
+                     <img src="~/images/NCRLogo.JPG" />
+                </a>
+                <a asp-area="" asp-controller="ProductDetails" asp-action="Index" class="navbar-brand">
+                    
+                    Retail Image Recognition
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -34,7 +41,7 @@
                     <li><a asp-area="" asp-controller="Training" asp-action="Train">Train Products</a></li>
                 </ul>
             </div>
-        </div>
+   
     </nav>
 
     <partial name="_CookieConsentPartial" />
@@ -42,9 +49,10 @@
     <div class="container body-content">
         @RenderBody()
         <hr />
-        <footer>
-            <p>@*&copy; 2019 - FindProductByImage*@</p>
-        </footer>
+        @*<footer>
+            <p>&copy; 2019 - FindProductByImage</p>
+        </footer>*@
+    </div>
     </div>
 
     <environment include="Development">

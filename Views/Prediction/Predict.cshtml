@@ -1,4 +1,5 @@
-﻿
+﻿@model List<FindProductByImage.Models.ProductDetails>
+
 @{
     Layout = null;
 }
@@ -38,8 +39,78 @@
 </head>
 <body class="container">
     <br />
-    <div class="col-md-2"></div>
-    <div class="col-md-4">
+    <div class="col-lg-6">
+        <form asp-controller="Predict" asp-action="SearchItem" method="get" class="panel">
+            <div class="row panel-heading">
+
+                <label class="col-sm-2 col-form-label">Item Name</label>
+
+                <div class="col-sm-6">
+                    <input value="" class="form-control" />
+                    @*<span asp-validation-for="Name" class="text-danger"></span>*@
+                </div>
+                <div class="col-sm-3">
+                    <button type="submit" asp-action="SearchItem" asp-route-id="item1" class="btn btn-outline-primary">Search</button>
+                </div>
+
+            </div>
+
+            <div class="panel-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @*@Html.DisplayNameFor(model => model.ID)*@
+                            </th>
+                            <th>
+                                @*@Html.DisplayNameFor(model => model.Name)*@
+                            </th>
+                            <th>
+                                @*@Html.DisplayNameFor(model => model.Price)*@
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Price)
+                                    </td>
+
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                    @if (Model != null)
+                    {
+                        <tfoot class="panel-footer"><tr>
+    <td></td>
+    <td>Total</td>
+    <td> @Model.Sum(p => p.Price)</td>
+</tr>
+                        </tfoot>
+                    }
+                    </table>
+
+           </div>
+
+       </form>
+
+   </div>
+
+   <div class="col-md-4">
         <div class="panel panel-default">
             <div class="panel-heading">Camera</div>
             <div class="panel-body">
@@ -51,9 +122,7 @@
 
             </div>
         </div>
-    </div>
-
-    <div class="col-md-4">
+        <br />
         <div class="panel panel-default">
             <div class="panel-heading">Captured Photo</div>
             <div class="panel-body">
@@ -65,7 +134,11 @@
         </div>
     </div>
 
-    <div class="col-md-2">    </div>
+    @*<div class="col-md-4">
+        
+    </div>*@
+
+    @*<div class="col-md-2">    </div>*@
     <!-- First, include the Webcam.js JavaScript Library -->
     <script src="~/webcamjs/webcam.js"></script>
     <!-- Configure a few settings and attach camera -->

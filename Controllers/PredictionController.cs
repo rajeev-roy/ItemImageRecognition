@@ -11,30 +11,54 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
+using FindProductByImage.ef;
 
 namespace FindProductByImage.Controllers
 {
     public class PredictionController : Controller
     {
+        public DataContext _context;
+        public static List<ProductDetails> lstProduct=new List<ProductDetails>();
         public IActionResult Index()
         {
             return View();
         }
         static public string tag_name = "Object not found";
-        //private readonly DatabaseContext _context;
         private readonly IHostingEnvironment _environment;
-        //string connectionString = @"Data Source=pratik\pratik_ncr;Initial Catalog=ProductScanDB;Integrated Security=True";
-        public PredictionController(IHostingEnvironment hostingEnvironment)//, DatabaseContext context)
+        
+        public PredictionController(IHostingEnvironment hostingEnvironment, DataContext context)
         {
             _environment = hostingEnvironment;
-            //_context = context;
-
+            _context = context;
+            
         }
 
         [HttpGet]
         public IActionResult Predict()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> SearchItem(string id)
+        {
+            if (id == "")
+            {
+                //return NotFound();
+                id = "item1";
+            }
+
+            var product = await _context.ProductDetails
+                .FirstOrDefaultAsync(m => m.Name == id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            lstProduct.Add(product);
+
+            return View("Predict",lstProduct);
+           
         }
 
 
@@ -67,15 +91,7 @@ namespace FindProductByImage.Controllers
                                 StoreInFolder(file, filepath);
                             }
                             MakePredictionRequest(filepath).Wait();
-                            //Console.WriteLine("\n\nHit ENTER to exit...");
-                            //Console.ReadLine();
-                            //var imageBytes = System.IO.File.ReadAllBytes(filepath);
-                            //if (imageBytes != null)
-                            //{
-                            //    // Storing Image in Folder
-                            //    StoreInDatabase(imageBytes);
-                            //}
-
+                            
                         }
                     }
                     ViewBag.Message = tag_name;
