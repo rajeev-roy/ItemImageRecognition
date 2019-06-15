@@ -50,7 +50,7 @@
                     @*<span asp-validation-for="Name" class="text-danger"></span>*@
                 </div>
                 <div class="col-sm-3">
-                    <button type="submit" asp-action="SearchItem" asp-route-id="item1" class="btn btn-outline-primary">Search</button>
+                    <button type="submit" asp-action="SearchItem" asp-route-id="popcorn" class="btn btn-outline-primary">Search</button>
                 </div>
 
             </div>
@@ -117,7 +117,7 @@
                 <div id="my_camera"></div>
                 <!-- A button for taking snaps -->
                 <form>
-                    <input type="button" class="btn btn-success" value="Take Snapshot" onClick="take_snapshot()">
+                    <input type="button" class="btn btn-success" value="Take Snapshot" onclick="take_snapshot()">
                 </form>
 
             </div>
@@ -162,13 +162,16 @@
                     '<img src="' +
                     data_uri +
                     '"/>';
-
+                
                 Webcam.upload(data_uri,
                     '/Prediction/Predict',
                     function (code, text) {
-                        alert("Picture Taken");
-                        alert(text);
+                        
+
+                        window.location.href = '@Url.Action("SearchItem", "Prediction" , new {id = "dummy" })'.replace("dummy", text);
+                        
                     });
+                
             });
 
         }

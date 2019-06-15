@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 //using DemoWebCam.EntityStore;
 using FindProductByImage.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -46,7 +47,7 @@ namespace FindProductByImage.Controllers
             if (id == "")
             {
                 //return NotFound();
-                id = "item1";
+                id = "lol";
             }
 
             var product = await _context.ProductDetails
@@ -63,7 +64,7 @@ namespace FindProductByImage.Controllers
 
 
         [HttpPost]
-        public IActionResult Predict(string name)
+        public string Predict(string name)
         {
             try
             {
@@ -94,12 +95,14 @@ namespace FindProductByImage.Controllers
                             
                         }
                     }
-                    ViewBag.Message = tag_name;
-                    return Json(tag_name);
+                    //ViewBag.Message = tag_name;
+                    //SearchItem(tag_name);
+            
+                    return tag_name;
                 }
                 else
                 {
-                    return Json(false);
+                    return tag_name;
                 }
             }
             catch (Exception)
