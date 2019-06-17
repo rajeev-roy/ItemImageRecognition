@@ -47,7 +47,7 @@
     <div class="row">
         <div class="column">
             <div class="col-md-4">
-                <form asp-action="Create">
+                <form id="creatform1" asp-action="Create">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label"></label>
@@ -65,7 +65,7 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-default" />
+                        <input type="button" id="cbtn" class="btn btn-default" value="Submit" onclick="checksubmit()" />
                     </div>
                     <div>
                         <span class="warning">@ViewBag.CameraError</span>
@@ -85,12 +85,13 @@
                         <div id="my_camera"></div>
                         <!-- A button for taking snaps -->
                         <form>
-                            <input type="button" class="btn btn-success" value="Take Snapshot" onClick="check()">
+                            <input type="button" id="cambtn" class="btn btn-success" value="Take Snapshot" onClick="checkcapture()">
                         </form>
 
                         <label>@ViewData["noOfPics"]</label>
                     </div>
                 </div>
+                <p1 id="capture_status"></p1>
             </div>
         </div>
 
@@ -139,7 +140,7 @@
                 <div class="col-md-4"></div>
 
                 <div align="center">
-                    <input type="submit" value="Upload" />
+                    <input type="submit" id="uploadbtn" value="Upload" />
                 </div>
                 <p name="p1" id="p1"></p>
             </form>
@@ -154,17 +155,48 @@
 </div>
 <script>
 
-    var counter = 0;
+   var flag = 0;
+    var captureCounter = 0;
+    var uploadCounter = 0;
 
-    function check() {
-        if (counter < 15) {
+    function checkcapture() {
+        flag = 1;
+        document.getElementById("uploadbtn").disabled = true;
+        if (captureCounter < 15) {
             take_snapshot();
-            counter++;
+            captureCounter++;
+            document.getElementById('capture_status').innerHTML="Image"+captureCounter+" captured"
         }
         else {
             alert("only 15 pictures allowed")
         }
     };
+
+    //function checkupload() {
+    //    flag = 2;
+    //    document.getElementById("cambtn").disabled = true;
+
+    //};
+
+    function checksubmit() {
+        
+        if (flag == 1) {
+            if (captureCounter < 15) {
+                alert("15 pictures required");
+                //return false;
+            }
+            if (captureCounter == 15) {
+                document.getElementById('creatform1').submit();
+            }
+            if (captureCounter > 15) {
+                alert("some error");
+            }
+        }
+        if (flag == 2) {
+
+        }
+
+    }
 </script>
 
 @section Scripts {

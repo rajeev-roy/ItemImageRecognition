@@ -17,6 +17,7 @@
     <Folder Include="DBScript\" />
     <Folder Include="wwwroot\CameraPhotos\" />
     <Folder Include="wwwroot\ImagesStorage\" />
+    <Folder Include="wwwroot\temporary\" />
   </ItemGroup>
 
 </Project>
