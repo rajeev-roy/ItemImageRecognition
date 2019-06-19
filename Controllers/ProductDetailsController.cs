@@ -259,6 +259,9 @@ namespace FindProductByImage.Controllers
             var productDetails = await _context.ProductDetails.FindAsync(id);
             _context.ProductDetails.Remove(productDetails);
             await _context.SaveChangesAsync();
+            string path = _environment.WebRootPath + "\\ImagesStorage\\" + id;
+            if (Directory.Exists(path))
+                Directory.Delete(path, true);
             return RedirectToAction(nameof(Index));
         }
 

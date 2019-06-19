@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Builder;
 using System.Text;
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction;
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
@@ -10,16 +11,15 @@ using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
 using System.IO;
 using System.Threading;
 using FindProductByImage.ef;
-using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 
-using System.Net.Http;
-using System.Web;
 
 namespace FindProductByImage.Controllers
 {
     public class TrainingController : Controller
     {
         private readonly DataContext _context;
+        public IConfiguration Configuration { get; }
         public string BaseImagesFolderPath = @"./wwwroot/ImagesStorage/";
         //public string BaseImagesFolderPath = @"C:\Users\Pratik saxsena\Desktop\NCR_Internship\frontend\FindProductByImage5\wwwroot\ImagesStorage\" ;
         private const string SouthCentralUsEndpoint = "https://centralindia.api.cognitive.microsoft.com";
@@ -33,8 +33,9 @@ namespace FindProductByImage.Controllers
         }
         public IActionResult Train()
         {
-            string trainingKey = "86669c56dcd746609e9d41de499ed397";
-            string predictionKey = "2800619721c248a291c61647aa3d3129";
+
+            string trainingKey = Configuration.GetSection("AzureKeys:TrainingKey").Value;
+            string predictionKey = Configuration.GetSection("AzureKeys:PredictionKey").Value;
 
             // Create the Api, passing in the training key
             CustomVisionTrainingClient trainingApi = new CustomVisionTrainingClient()
@@ -113,9 +114,11 @@ namespace FindProductByImage.Controllers
 
             // The iteration is now trained. Publish it to the prediction end point.
             var publishedModelName = "FindProductByImageModel";
-            var predictionResourceId = "/subscriptions/cdb468a6-b070-4ee1-961a-72615ccadae3/resourceGroups/demo_resource/providers/Microsoft.CognitiveServices/accounts/demo_resource_prediction";
+            var predictionResourceId = Configuration.GetSection("AzureKeys:PredictionResourceId").Value;
             trainingApi.PublishIteration(project.Id, iteration.Id, publishedModelName, predictionResourceId);
             //Recursively deleting local image files used for training
+            
+            System.IO.File.WriteAllText(@"./ProjectId.txt", project.Id.ToString());
             foreach (var sub_folder in AvailableID)
             {
                 string TargetFolder = BaseImagesFolderPath + sub_folder.ToString();

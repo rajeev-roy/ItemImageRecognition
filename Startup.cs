@@ -35,8 +35,8 @@ namespace FindProductByImage
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            //var connection = Configuration.GetConnectionString("DefaultConnection"); //@"Data Source = .; Initial Catalog = ProductScanDB; Integrated Security = True";
-            var connection = @"Data Source = TANIS\SQLEXPRESS; Initial Catalog = ProductScanDB; Integrated Security = True";
+            var connection = Configuration.GetConnectionString("DefaultConnection"); //@"Data Source = .; Initial Catalog = ProductScanDB; Integrated Security = True";
+            //var connection = @"Data Source = TANIS\SQLEXPRESS; Initial Catalog = ProductScanDB; Integrated Security = True";
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
             services.AddMvc();
             //services.AddPaging();

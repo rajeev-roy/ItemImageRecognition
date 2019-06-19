@@ -14,11 +14,17 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using FindProductByImage.ef;
+using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction;
+using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
+using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
+using Microsoft.Extensions.Configuration;
+
 
 namespace FindProductByImage.Controllers
 {
     public class PredictionController : Controller
     {
+        public IConfiguration Configuration { get; }
         public DataContext _context;
         public static List<ProductDetails> lstProduct=new List<ProductDetails>();
         public IActionResult Index()
@@ -91,13 +97,13 @@ namespace FindProductByImage.Controllers
                                 // Storing Image in Folder
                                 StoreInFolder(file, filepath);
                             }
-                            MakePredictionRequest(filepath).Wait();
+                            MakePredictionRequest(filepath,Configuration).Wait();
                             
                         }
                     }
                     //ViewBag.Message = tag_name;
                     //SearchItem(tag_name);
-            
+                   
                     return tag_name;
                 }
                 else
@@ -125,9 +131,10 @@ namespace FindProductByImage.Controllers
                 fs.Flush();
             }
         }
-        public static async Task MakePredictionRequest(string imageFilePath)
+        public static async Task MakePredictionRequest(string imageFilePath,IConfiguration configuration)
         {
             var client = new HttpClient();
+            string predictionkey = configuration.GetSection("AzureKeys:TrainingKey").Value;
 
             // Request headers - replace this example key with your valid Prediction-Key.
             client.DefaultRequestHeaders.Add("Prediction-Key", "2800619721c248a291c61647aa3d3129");
@@ -158,6 +165,24 @@ namespace FindProductByImage.Controllers
 
                 }
                 //prediction_response.
+               
+                CustomVisionPredictionClient endpoint = new CustomVisionPredictionClient()
+                {
+                    ApiKey = configuration.GetSection("AzureKeys:PredictionKey").Value,
+                    Endpoint = "https://centralindia.api.cognitive.microsoft.com"
+                };
+
+                
+                //using (var stream = System.IO.File.OpenRead(imageFile))
+                //{
+                //    var result = endpoint.DetectImage(project.Id, publishedModelName, File.OpenRead(imageFile));
+
+                //    // Loop over each prediction and write out the results
+                //    foreach (var c in result.Predictions)
+                //    {
+                //        Console.WriteLine($"\t{c.TagName}: {c.Probability:P1} [ {c.BoundingBox.Left}, {c.BoundingBox.Top}, {c.BoundingBox.Width}, {c.BoundingBox.Height} ]");
+                //    }
+                //}
             }
 
         }
