@@ -118,7 +118,7 @@
         </script>
     </div>
 
-    <div class="row">
+    @*<div class="row">
         <div>
             <div class="col-md-4"></div>
             <div class="col-md-2"></div>
@@ -128,9 +128,7 @@
             <form method="post" action="/ProductDetails/UploadPictures" enctype="multipart/form-data">
                 <div class="col-md-4"></div>
 
-                @*<span>Select File:</span>*@
                 <div align="center">
-                    @*<input type="file" name="postedFiles" id="file" multiple="multiple" accept=".jpg, .png , .jpeg" onchange="validate()" />*@
                     <input type="file" name="pics" id="pics" multiple onchange="validate(pics)" required />
                     <br />
                     <br />
@@ -146,7 +144,7 @@
             </form>
             <span style="color:green">@ViewData["noOfFiles"]</span>
         </div>
-    </div>
+    </div>*@
 </body>
 
 </html>
@@ -155,17 +153,17 @@
 </div>
 <script>
 
-   var flag = 0;
-    var captureCounter = 0;
-    var uploadCounter = 0;
+   //var flag = 0;
+   var captureCounter = 0;
+   //var uploadCounter = 0;
 
     function checkcapture() {
-        flag = 1;
-        document.getElementById("uploadbtn").disabled = true;
+        //flag = 1;
+        //document.getElementById("uploadbtn").disabled = true;
         if (captureCounter < 15) {
             take_snapshot();
             captureCounter++;
-            document.getElementById('capture_status').innerHTML="Image"+captureCounter+" captured"
+            document.getElementById('capture_status').innerHTML= captureCounter+ " image captured"
         }
         else {
             alert("only 15 pictures allowed")
@@ -179,10 +177,12 @@
     //};
 
     function checksubmit() {
-        
-        if (flag == 1) {
+        //if (flag == 0)
+        //    alert("15 pictures required");
+        //if (flag == 1) {
+
             if (captureCounter < 15) {
-                alert("15 pictures required");
+                alert((15 - captureCounter)+" pictures required");
                 //return false;
             }
             if (captureCounter == 15) {
@@ -191,10 +191,10 @@
             if (captureCounter > 15) {
                 alert("some error");
             }
-        }
-        if (flag == 2) {
+        //}
+        //if (flag == 2) {
 
-        }
+        //}
 
     }
 </script>

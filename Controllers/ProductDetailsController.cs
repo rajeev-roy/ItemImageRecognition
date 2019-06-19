@@ -89,6 +89,10 @@ namespace FindProductByImage.Controllers
         private void SaveImages(int id)
         {
             var tempFolderPath = Path.Combine(_environment.WebRootPath, "temporary");
+            if (!Directory.Exists(tempFolderPath))
+            {
+                Directory.CreateDirectory(tempFolderPath);
+            }
             if (Directory.Exists(tempFolderPath))
             {
                 fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count();
@@ -137,47 +141,47 @@ namespace FindProductByImage.Controllers
 
         }
 
-        private void SaveUploads(int id)
-        {
-            var tempFolderPath = Path.Combine(_environment.WebRootPath, "upload");
-            fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count() +
-                Directory.EnumerateFiles(tempFolderPath, "*.png", SearchOption.AllDirectories).Count();
+        //private void SaveUploads(int id)
+        //{
+        //    var tempFolderPath = Path.Combine(_environment.WebRootPath, "upload");
+        //    fileCount = Directory.EnumerateFiles(tempFolderPath, "*.jpg", SearchOption.AllDirectories).Count() +
+        //        Directory.EnumerateFiles(tempFolderPath, "*.png", SearchOption.AllDirectories).Count();
 
-            if (fileCount == 15)
-            {
-                var newFolderName = id.ToString();
-                string path = _environment.WebRootPath + "\\ImagesStorage\\" + newFolderName;
-                System.IO.Directory.CreateDirectory(path);
-                var storeImagePath = Path.Combine(_environment.WebRootPath, "ImagesStorage", newFolderName);
+        //    if (fileCount == 15)
+        //    {
+        //        var newFolderName = id.ToString();
+        //        string path = _environment.WebRootPath + "\\ImagesStorage\\" + newFolderName;
+        //        System.IO.Directory.CreateDirectory(path);
+        //        var storeImagePath = Path.Combine(_environment.WebRootPath, "ImagesStorage", newFolderName);
 
-                if (System.IO.Directory.Exists(tempFolderPath))
-                {
-                    string[] files = System.IO.Directory.GetFiles(tempFolderPath);
-                    string fileName;
-                    string destFile;
+        //        if (System.IO.Directory.Exists(tempFolderPath))
+        //        {
+        //            string[] files = System.IO.Directory.GetFiles(tempFolderPath);
+        //            string fileName;
+        //            string destFile;
 
-                    // Copy the files and overwrite destination files if they already exist.
-                    foreach (string s in files)
-                    {
-                        // Use static Path methods to extract only the file name from the path.
-                        fileName = System.IO.Path.GetFileName(s);
-                        destFile = System.IO.Path.Combine(storeImagePath, fileName);
-                        System.IO.File.Copy(s, destFile, true);
-                        System.IO.File.Delete(s);
-                    }
+        //            // Copy the files and overwrite destination files if they already exist.
+        //            foreach (string s in files)
+        //            {
+        //                // Use static Path methods to extract only the file name from the path.
+        //                fileName = System.IO.Path.GetFileName(s);
+        //                destFile = System.IO.Path.Combine(storeImagePath, fileName);
+        //                System.IO.File.Copy(s, destFile, true);
+        //                System.IO.File.Delete(s);
+        //            }
 
-                }
+        //        }
 
-                else
-                {
-                    ViewBag.CameraError = "Source path does not exist!";
-                }
-            }
-            else
-            {
-                ViewBag.CameraError = "less than 15";
-            }
-        }
+        //        else
+        //        {
+        //            ViewBag.CameraError = "Source path does not exist!";
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ViewBag.CameraError = "less than 15";
+        //    }
+        //}
 
         // GET: ProductDetails/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -263,37 +267,38 @@ namespace FindProductByImage.Controllers
             return _context.ProductDetails.Any(e => e.ID == id);
         }
 
-        public IActionResult UploadPictures(IList<IFormFile> pics)
-        {
-            try
-            {
-                string path = _environment.WebRootPath + "\\upload\\";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+        //public IActionResult UploadPictures(IList<IFormFile> pics)
+        //{
+        //    try
+        //    {
+        //        string path = _environment.WebRootPath + "\\upload\\";
+        //        if (!Directory.Exists(path))
+        //        {
+        //            Directory.CreateDirectory(path);
+        //        }
 
-                foreach (var pic in pics)
-                {
-                    if (pic != null)
-                    {
-                        var fileName = Path.Combine(path, Path.GetFileName(pic.FileName));
-                        pic.CopyTo(new FileStream(fileName, FileMode.Create));
-                        ViewData["noOfFiles"] = pics.Count;
+        //        foreach (var pic in pics)
+        //        {
+        //            if (pic != null)
+        //            {
+        //                var fileName = Path.Combine(path, Path.GetFileName(pic.FileName));
+        //                pic.CopyTo(new FileStream(fileName, FileMode.Create));
+        //                ViewData["noOfFiles"] = pics.Count;
 
-                    }
-                }
-                string dummy = pics.Count + "files successfully uploaded";
-                ViewData["noOfFiles"] = dummy;
-            }
-            catch(Exception e)
-            {
-                throw;
-            }
+        //            }
+        //        }
+        //        string dummy = pics.Count + "files successfully uploaded";
+        //        ViewData["noOfFiles"] = dummy;
+        //    }
+        //    catch(Exception e)
+        //    {
+        //        throw;
+        //    }
 
-            return View("Create");
+        //    return View("Create");
+        //    //return Json(false);
             
-        }
+        //}
 
         [HttpPost]
         public IActionResult Capture(int id)
@@ -333,6 +338,8 @@ namespace FindProductByImage.Controllers
 
                             }
                         }
+                        if (count == 16)
+                            count = 1;
                         return Json(count);
                     }
                     else
