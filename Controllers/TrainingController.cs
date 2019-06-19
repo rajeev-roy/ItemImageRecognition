@@ -27,10 +27,13 @@ namespace FindProductByImage.Controllers
         {
             return View();
         }
-        public TrainingController(DataContext context)
+        
+        public TrainingController(DataContext context,IConfiguration configuration)
         {
             _context = context;
+            Configuration = configuration;
         }
+        
         public IActionResult Train()
         {
 
@@ -47,20 +50,28 @@ namespace FindProductByImage.Controllers
             // Find the object detection domain
             var domains = trainingApi.GetDomains();
             var objDetectionDomain = domains.FirstOrDefault(d => d.Type == "Classification");
-
+            var projectsList = trainingApi.GetProjects();
+            var project = projectsList.FirstOrDefault(p => p.Name == "FindProjectByImage");
             // Create a new project
-            var project = trainingApi.CreateProject("FindProductByImage", null, objDetectionDomain.Id);
+            if(project == null)
+                project = trainingApi.CreateProject("FindProjectByImage", null, objDetectionDomain.Id);
             //Make new tags in the new project
-            List<int> AvailableID = _context.ProductDetails.Select(u => u.ID).ToList();
-            
+            List<int> AllID = _context.ProductDetails.Select(u => u.ID).ToList();
             List<Tag> TagList = new List<Tag> { };
-            foreach (var tag_name in AvailableID)
+            IList<Tag> AvailableTagList = trainingApi.GetTags(project.Id);
+            List<int> AvailableID = new List<int>();
+            foreach(var tag_name in AvailableTagList)
+            {
+                AvailableID.Add(Int32.Parse(tag_name.Name));
+            }
+            var NewID = AllID.Except(AvailableID);
+            foreach (var tag_name in NewID)
             {
                 TagList.Add(trainingApi.CreateTag(project.Id, tag_name.ToString()));
             }
             double[] NormalizedRegion = new double[] { 0.1, 0.1, 0.1, 0.1 };
             Dictionary<string, double[]> fileToRegionMap = new Dictionary<string, double[]>();
-            foreach (var sub_folder in AvailableID)
+            foreach (var sub_folder in NewID)
             {
                 string TargetFolder = BaseImagesFolderPath + sub_folder.ToString();
                 if (Directory.Exists(TargetFolder))
@@ -80,7 +91,7 @@ namespace FindProductByImage.Controllers
 
             }
 
-            foreach (var sub_folder in AvailableID)
+            foreach (var sub_folder in NewID)
             {
                 string TargetFolder = BaseImagesFolderPath + sub_folder.ToString();
                 var imageFileEntries = new List<ImageFileCreateEntry>();
@@ -111,15 +122,19 @@ namespace FindProductByImage.Controllers
                 // Re-query the iteration to get its updated status
                 iteration = trainingApi.GetIteration(project.Id, iteration.Id);
             }
-
+            string iteration_number = System.IO.File.ReadAllText(@"./IterationNumber.txt");
             // The iteration is now trained. Publish it to the prediction end point.
-            var publishedModelName = "FindProductByImageModel";
+            var publishedModelName = "FindProductByImageModel" + iteration_number;
             var predictionResourceId = Configuration.GetSection("AzureKeys:PredictionResourceId").Value;
             trainingApi.PublishIteration(project.Id, iteration.Id, publishedModelName, predictionResourceId);
             //Recursively deleting local image files used for training
-            
+            int increment_iteration = Int32.Parse(iteration_number);
+            increment_iteration++;
+            System.IO.File.WriteAllText(@"./IterationNumber.txt", increment_iteration.ToString());
             System.IO.File.WriteAllText(@"./ProjectId.txt", project.Id.ToString());
-            foreach (var sub_folder in AvailableID)
+            System.IO.File.WriteAllText(@"./PublishedModelName.txt", publishedModelName);
+
+            foreach (var sub_folder in AllID)
             {
                 string TargetFolder = BaseImagesFolderPath + sub_folder.ToString();
                 if (Directory.Exists(TargetFolder))

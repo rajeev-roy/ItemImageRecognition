@@ -31,13 +31,15 @@ namespace FindProductByImage.Controllers
         {
             return View();
         }
-        static public string tag_name = "Object not found";
+        
+        static public string tag_name = "Product not found";
         private readonly IHostingEnvironment _environment;
         
-        public PredictionController(IHostingEnvironment hostingEnvironment, DataContext context)
+        public PredictionController(IHostingEnvironment hostingEnvironment, DataContext context,IConfiguration configuration)
         {
             _environment = hostingEnvironment;
             _context = context;
+            Configuration = configuration;
             
         }
 
@@ -50,14 +52,14 @@ namespace FindProductByImage.Controllers
         [HttpGet]
         public async Task<IActionResult> SearchItem(string id)
         {
-            if (id == "")
+            if (id == "Product not found")
             {
-                //return NotFound();
-                id = "lol";
+                return NotFound();
+                //id = "not found";
             }
 
             var product = await _context.ProductDetails
-                .FirstOrDefaultAsync(m => m.Name == id);
+                .FirstOrDefaultAsync(m => m.ID == Int32.Parse(id));
             if (product == null)
             {
                 return NotFound();
@@ -97,7 +99,7 @@ namespace FindProductByImage.Controllers
                                 // Storing Image in Folder
                                 StoreInFolder(file, filepath);
                             }
-                            MakePredictionRequest(filepath,Configuration).Wait();
+                            MakePredictionRequest(filepath,Configuration)/*.Wait()*/;
                             
                         }
                     }
@@ -131,60 +133,33 @@ namespace FindProductByImage.Controllers
                 fs.Flush();
             }
         }
-        public static async Task MakePredictionRequest(string imageFilePath,IConfiguration configuration)
+        public void MakePredictionRequest(string imageFilePath,IConfiguration configuration)
         {
-            var client = new HttpClient();
-            string predictionkey = configuration.GetSection("AzureKeys:TrainingKey").Value;
-
-            // Request headers - replace this example key with your valid Prediction-Key.
-            client.DefaultRequestHeaders.Add("Prediction-Key", "2800619721c248a291c61647aa3d3129");
-
-            // Prediction URL - replace this example URL with your valid Prediction URL.
-            string url = "https://centralindia.api.cognitive.microsoft.com/customvision/v3.0/Prediction/3fb9d879-1634-4a50-a35b-77003651195c/classify/iterations/Iteration2/image";
-
-            HttpResponseMessage response;
-
-            // Request body. Try this sample with a locally stored image.
-            byte[] byteData = GetImageAsByteArray(imageFilePath);
-
-            using (var content = new ByteArrayContent(byteData))
+           
+            CustomVisionPredictionClient endpoint = new CustomVisionPredictionClient()
             {
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
-                response = await client.PostAsync(url, content);
-                string prediction_response = response.Content.ReadAsStringAsync().Result;
-                PredictionResponse jsonresponse = JsonConvert.DeserializeObject<PredictionResponse>(prediction_response);
-                foreach (var tags in jsonresponse.Predictions)
-                {
-                    double probability = Convert.ToDouble(tags["probability"]);
-                    if (probability > 0.8)
-                    {
-                        tag_name = tags["tagName"];
+                ApiKey = configuration.GetSection("AzureKeys:PredictionKey").Value,
+                Endpoint = "https://centralindia.api.cognitive.microsoft.com"
+            };
+            
 
-                        break;
-                    }
-
-                }
-                //prediction_response.
+            using (var stream = System.IO.File.OpenRead(imageFilePath))
+            {
+                var result = endpoint.ClassifyImage(Guid.Parse(System.IO.File.ReadAllText(@"./ProjectId.txt")), System.IO.File.ReadAllText(@"./PublishedModelName.txt"), System.IO.File.OpenRead(imageFilePath));
                
-                CustomVisionPredictionClient endpoint = new CustomVisionPredictionClient()
-                {
-                    ApiKey = configuration.GetSection("AzureKeys:PredictionKey").Value,
-                    Endpoint = "https://centralindia.api.cognitive.microsoft.com"
-                };
-
                 
-                //using (var stream = System.IO.File.OpenRead(imageFile))
-                //{
-                //    var result = endpoint.DetectImage(project.Id, publishedModelName, File.OpenRead(imageFile));
+                //Loop over each prediction and write out the results
+                foreach (var c in result.Predictions)
+                {
+                    if (c.Probability > 0.80)
+                    {
+                        tag_name = c.TagName;
+                    }
+                    //Console.WriteLine($"\t{c.TagName}: {c.Probability:P1} [ {c.BoundingBox.Left}, {c.BoundingBox.Top}, {c.BoundingBox.Width}, {c.BoundingBox.Height} ]");
+                }
 
-                //    // Loop over each prediction and write out the results
-                //    foreach (var c in result.Predictions)
-                //    {
-                //        Console.WriteLine($"\t{c.TagName}: {c.Probability:P1} [ {c.BoundingBox.Left}, {c.BoundingBox.Top}, {c.BoundingBox.Width}, {c.BoundingBox.Height} ]");
-                //    }
-                //}
+
             }
-
         }
 
         private static byte[] GetImageAsByteArray(string imageFilePath)

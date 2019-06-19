@@ -158,8 +158,7 @@
    //var uploadCounter = 0;
 
     function checkcapture() {
-        //flag = 1;
-        //document.getElementById("uploadbtn").disabled = true;
+        
         if (captureCounter < 15) {
             take_snapshot();
             captureCounter++;
@@ -170,33 +169,38 @@
         }
     };
 
-    //function checkupload() {
-    //    flag = 2;
-    //    document.getElementById("cambtn").disabled = true;
-
-    //};
+    
 
     function checksubmit() {
-        //if (flag == 0)
-        //    alert("15 pictures required");
-        //if (flag == 1) {
+        
 
-            if (captureCounter < 15) {
-                alert((15 - captureCounter)+" pictures required");
-                //return false;
-            }
-            if (captureCounter == 15) {
-                document.getElementById('creatform1').submit();
-            }
-            if (captureCounter > 15) {
-                alert("some error");
-            }
-        //}
-        //if (flag == 2) {
+        if (captureCounter < 15) {
 
-        //}
+            
+
+            alert((15 - captureCounter) + " pictures required");
+            //return false;
+        }
+        if (captureCounter == 15) {
+            if(document.getElementById("Name").value.length==0||document.getElementById("Price").value.length==0||document.getElementById("Description").value.length==0)
+            
+            {
+               alert('please enter product details');
+            }
+            else {
+                 document.getElementById('creatform1').submit();
+            }
+         
+
+        }
+        if (captureCounter > 15) {
+            alert("some error");
+        }
+        
 
     }
+
+
 </script>
 
 @section Scripts {
