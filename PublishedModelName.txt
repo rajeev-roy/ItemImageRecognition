@@ -1,1 +1,1 @@
-FindProductByImageModel1
+FindProductByImageModel2

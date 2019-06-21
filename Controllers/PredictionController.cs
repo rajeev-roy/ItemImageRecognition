@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-//using DemoWebCam.EntityStore;
 using FindProductByImage.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +17,7 @@ using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction;
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training;
 using Microsoft.Azure.CognitiveServices.Vision.CustomVision.Training.Models;
 using Microsoft.Extensions.Configuration;
-
+using FindProductByImage.ViewModel;
 
 namespace FindProductByImage.Controllers
 {
@@ -49,24 +48,31 @@ namespace FindProductByImage.Controllers
             return View();
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SearchItem(string id)
+        //[HttpGet]
+        public async Task<IActionResult> SearchItem(int? id)
         {
-            if (id == "Product not found")
+            if (id == null)
             {
                 return NotFound();
-                //id = "not found";
+               
             }
 
-            var product = await _context.ProductDetails
-                .FirstOrDefaultAsync(m => m.ID == Int32.Parse(id));
-            if (product == null)
+            var productDetails = await _context.ProductDetails.FindAsync(id);
+            if (productDetails == null)
             {
                 return NotFound();
             }
-            lstProduct.Add(product);
+            //var productDetails = await _context.ProductDetails
+            //    .FirstOrDefaultAsync(m => m.ID == Int32.Parse(id));
+            //if (productDetails == null)
+            //{
+            //    return NotFound();
+            //}
+            lstProduct.Add(productDetails);
+            PredictionViewModel predictionViewModel = new PredictionViewModel();
+            predictionViewModel.lstProductDetails = lstProduct;
 
-            return View("Predict",lstProduct);
+            return View("Predict", predictionViewModel);
            
         }
 
@@ -113,9 +119,9 @@ namespace FindProductByImage.Controllers
                     return tag_name;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }

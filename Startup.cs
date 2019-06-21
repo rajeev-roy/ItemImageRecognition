@@ -39,6 +39,7 @@ namespace FindProductByImage
             //var connection = @"Data Source = TANIS\SQLEXPRESS; Initial Catalog = ProductScanDB; Integrated Security = True";
             services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
             services.AddMvc();
+
             //services.AddPaging();
             services.AddSession(options => {
                 options.IdleTimeout = TimeSpan.FromMinutes(3);

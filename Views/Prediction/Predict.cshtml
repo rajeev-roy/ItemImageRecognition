@@ -1,9 +1,6 @@
-﻿@model List<FindProductByImage.Models.ProductDetails>
+﻿@model FindProductByImage.ViewModel.PredictionViewModel
 
-@{
-    Layout = null;
-}
-@using FindProductByImage.Controllers
+@*@using FindProductByImage.Controllers*@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,17 +37,17 @@
 <body class="container">
     <br />
     <div class="col-lg-6">
-        <form asp-controller="Predict" asp-action="SearchItem" method="get" class="panel">
+        <form asp-action="SearchItem" class="panel">
             <div class="row panel-heading">
 
-                <label class="col-sm-2 col-form-label">Item Name</label>
+                <label class="col-sm-2 col-form-label">Item ID</label>
 
                 <div class="col-sm-6">
-                    <input value="" class="form-control" />
-                    @*<span asp-validation-for="Name" class="text-danger"></span>*@
+                    <input asp-for="ID" id="ItemID" value="" class="form-control" />
+                    <span asp-validation-for="ID" class="text-danger"></span>
                 </div>
                 <div class="col-sm-3">
-                    <button type="submit" asp-action="SearchItem" asp-route-id="popcorn" class="btn btn-outline-primary">Search</button>
+                    <button type="submit" class="btn btn-success">Add</button>
                 </div>
 
             </div>
@@ -59,14 +56,13 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>
-                                @*@Html.DisplayNameFor(model => model.ID)*@
+                            <th>ID
                             </th>
                             <th>
-                                @*@Html.DisplayNameFor(model => model.Name)*@
+                               Description
                             </th>
                             <th>
-                                @*@Html.DisplayNameFor(model => model.Price)*@
+                                Price
                             </th>
 
                         </tr>
@@ -74,7 +70,7 @@
                     <tbody>
                         @if (Model != null)
                         {
-                            foreach (var item in Model)
+                            foreach (var item in Model.lstProductDetails)
                             {
                                 <tr>
                                     <td>
@@ -98,7 +94,7 @@
                         <tfoot class="panel-footer"><tr>
     <td></td>
     <td>Total</td>
-    <td> @Model.Sum(p => p.Price)</td>
+    <td> @Model.lstProductDetails.Sum(p => p.Price)</td>
 </tr>
                         </tfoot>
                     }
