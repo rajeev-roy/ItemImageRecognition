@@ -162,9 +162,10 @@
                 Webcam.upload(data_uri,
                     '/Prediction/Predict',
                     function (code, text) {
-                        
-
-                        window.location.href = '@Url.Action("SearchItem", "Prediction" , new {id = "dummy" })'.replace("dummy", text);
+                        if (text == "Product not found")
+                            alert("Product not found");
+                        else
+                            window.location.href = '@Url.Action("SearchItem", "Prediction" , new {id = "dummy" })'.replace("dummy", text);
                         
                     });
                 

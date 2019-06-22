@@ -80,6 +80,7 @@ namespace FindProductByImage.Controllers
         [HttpPost]
         public string Predict(string name)
         {
+            tag_name = "Product not found";
             try
             {
                 var files = HttpContext.Request.Form.Files;
